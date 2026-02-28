@@ -1,0 +1,87 @@
+<!-- pages/home/home.wxml -->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="title">Welcome to Pokemon world</text>
+    <text class="total">Total count: {{total}}</text>
+  </view>
+
+  <!-- 类型选择器 -->
+  <view class="type-section">
+    <text class="section-label">Types:</text>
+    <view class="type-buttons">
+      <button
+        wx:for="{{types}}"
+        wx:key="name"
+        size="mini"
+        class="type-btn {{selectedType === item.name ? 'active' : ''}}"
+        data-type="{{item.name}}"
+        bindtap="onSelectType"
+      >
+        {{item.name}}
+      </button>
+      <button
+        wx:if="{{selectedType}}"
+        size="mini"
+        class="type-btn clear"
+        bindtap="onClearType"
+      >
+        Clear
+      </button>
+    </view>
+  </view>
+
+  <!-- 列表区域 -->
+  <view class="list-section">
+    <view class="list-header">
+      <text class="list-title">
+        {{selectedType ? 'Selected type: ' + selectedType : 'All Pokémon'}}
+      </text>
+      <text class="list-subtitle">Page {{page}} / {{totalPages}}</text>
+    </view>
+
+    <!-- 加载动画：使用 SVG -->
+    <view wx:if="{{loading}}" class="loading">
+      <image src="/images/loading.svg" mode="aspectFit" style="width: 60rpx; height: 60rpx;" />
+    </view>
+
+    <view wx:else class="pokemon-grid">
+      <view
+        wx:for="{{pokemonList}}"
+        wx:key="name"
+        class="pokemon-card"
+        data-name="{{item.name}}"
+        bindtap="goToDetail"
+      >
+        <!-- 从 URL 中提取 ID 构建官方图片地址 -->
+        
+        <!-- {{'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{item.url.split('/')[5]}}.png'}} -->
+
+        <image 
+  src="{{item.imageUrl}}" 
+  mode="aspectFit" 
+  class="pokemon-image"
+  binderror="onImageError"
+/>
+        <text class="pokemon-name">#{{item.url.split('/')[6]}} {{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 分页 -->
+    <view wx:if="{{!loading && totalPages > 0}}" class="pagination">
+      <button
+        size="mini"
+        disabled="{{page <= 1}}"
+        data-page="{{page - 1}}"
+        bindtap="onPageChange"
+      >Prev</button>
+      <text>{{page}} / {{totalPages}}</text>
+      <button
+        size="mini"
+        disabled="{{page >= totalPages}}"
+        data-page="{{page + 1}}"
+        bindtap="onPageChange"
+      >Next</button>
+    </view>
+  </view>
+</view>

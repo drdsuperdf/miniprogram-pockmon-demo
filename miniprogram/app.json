@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/detail/detail"
+  ],
+  "window": {
+    "navigationBarTitleText": "宝可梦图鉴",
+    "navigationBarBackgroundColor": "#ffffff"
+  }
+}

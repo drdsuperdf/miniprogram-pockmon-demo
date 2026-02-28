@@ -1,0 +1,21 @@
+<!-- pages/detail/detail.wxml -->
+<view class="container">
+  <view class="loading" wx:if="{{loading}}">
+    <image src="/images/loading.svg" mode="aspectFit" style="width: 60rpx; height: 60rpx;" />
+  </view>
+
+  <view wx:else class="detail-card">
+    <image
+      src="{{pokemon.sprites.front_default}}"
+      mode="aspectFit"
+      class="sprite"
+    />
+    <text class="pokemon-name">#{{pokemon.id}} {{pokemon.name}}</text>
+    <view class="abilities">
+      <text wx:for="{{pokemon.abilities}}" wx:key="slot" class="ability">
+        {{item.ability.name}}
+      </text>
+    </view>
+    <button bindtap="goBack">返回搜索</button>
+  </view>
+</view>
