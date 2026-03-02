@@ -9,14 +9,11 @@ import {
 
 const PAGE_SIZE = 24;
 
-// 辅助函数：从 PokeAPI 的宝可梦 URL 中提取数字 ID
 function extractPokemonId(url: string): string {
-  // 正则匹配 URL 末尾的数字（支持 /25/、/25、/25?param= 等情况）
   const match = url.match(/\/(\d+)(?:\/|$|\?)/);
-  return match ? match[1] : '0'; // 如果没找到返回 '0'（可自定义默认值）
+  return match ? match[1] : '0';
 }
 
-// 辅助函数：生成 GitHub 官方精灵图 URL
 function getPokemonImageUrl(pokemonUrl: string): string {
   const id = extractPokemonId(pokemonUrl);
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
@@ -28,16 +25,19 @@ Page({
     types: [] as NamedAPIResource[],
     selectedType: null as string | null,
     pokemonList: [] as (NamedAPIResource & { imageUrl: string })[],
+    filteredList: [] as (NamedAPIResource & { imageUrl: string })[],
+    filterText: '',
     page: 1,
     totalPages: 1,
     loading: false,
+    filterDebounceTimer: null as number | null,
+    typesExpanded: true, // 新增：类型列表是否展开
   },
 
   onLoad() {
     this.fetchTotalAndTypes();
   },
 
-  // 获取总数和类型列表
   async fetchTotalAndTypes() {
     this.setData({ loading: true });
     try {
@@ -62,7 +62,6 @@ Page({
     }
   },
 
-  // 根据当前模式（有无类型筛选）获取列表
   async fetchListByCurrentMode(page: number) {
     this.setData({ loading: true, page });
     const offset = (page - 1) * PAGE_SIZE;
@@ -80,7 +79,6 @@ Page({
         totalItems = this.data.total;
       }
 
-      // 为每个项添加 imageUrl 字段
       const enrichedList = list.map(item => ({
         ...item,
         imageUrl: getPokemonImageUrl(item.url),
@@ -92,6 +90,8 @@ Page({
         pokemonList: enrichedList,
         totalPages,
         loading: false,
+      }, () => {
+        this.applyFilter();
       });
     } catch (err) {
       console.error('fetchListByCurrentMode error:', err);
@@ -108,37 +108,65 @@ Page({
     }
   },
 
-  // 选择类型
+  onFilterInput(e: WechatMiniprogram.Input) {
+    const text = e.detail.value;
+    this.setData({ filterText: text });
+
+    if (this.data.filterDebounceTimer) {
+      clearTimeout(this.data.filterDebounceTimer);
+    }
+
+    const timer = setTimeout(() => {
+      this.applyFilter();
+    }, 300) as unknown as number;
+
+    this.setData({ filterDebounceTimer: timer });
+  },
+
+  applyFilter() {
+    const { pokemonList, filterText } = this.data;
+    if (!filterText.trim()) {
+      this.setData({ filteredList: pokemonList });
+      return;
+    }
+    const lowerText = filterText.toLowerCase();
+    const filtered = pokemonList.filter(item =>
+      item.name.toLowerCase().includes(lowerText)
+    );
+    this.setData({ filteredList: filtered });
+  },
+
+  // 切换类型列表折叠状态
+  toggleTypes() {
+    this.setData({ typesExpanded: !this.data.typesExpanded });
+  },
+
   onSelectType(e: WechatMiniprogram.TouchEvent) {
     const type = e.currentTarget.dataset.type as string;
     const selectedType = this.data.selectedType === type ? null : type;
-    this.setData({ selectedType, page: 1 });
+    this.setData({ selectedType, page: 1, filterText: '' });
     this.fetchListByCurrentMode(1);
   },
 
-  // 清除类型筛选
   onClearType() {
-    this.setData({ selectedType: null, page: 1 });
+    this.setData({ selectedType: null, page: 1, filterText: '' });
     this.fetchListByCurrentMode(1);
   },
 
-  // 改变页码
   onPageChange(e: WechatMiniprogram.TouchEvent) {
     const newPage = e.currentTarget.dataset.page as number;
     if (newPage >= 1 && newPage <= this.data.totalPages) {
+      this.setData({ filterText: '' });
       this.fetchListByCurrentMode(newPage);
     }
   },
 
-  // 跳转到详情页
   goToDetail(e: WechatMiniprogram.TouchEvent) {
     const name = e.currentTarget.dataset.name as string;
     wx.navigateTo({ url: `/pages/detail/detail?name=${name}` });
   },
 
-  // 可选：图片加载失败时的回调
   onImageError(e: WechatMiniprogram.TouchEvent) {
     console.warn('Image load error', e);
-    // 可以在这里实现更精细的替换逻辑，例如使用默认占位图
   },
 });

@@ -6,10 +6,27 @@
     <text class="total">Total count: {{total}}</text>
   </view>
 
-  <!-- 类型选择器 -->
+  
+  <!-- 名字过滤输入框（placeholder 居中且变小） -->
+  <view class="filter-section">
+  <div class="filter-row">
+    <text>在此输入过滤👇</text>
+    <input 
+      type="text" 
+      placeholder="输入名字过滤" 
+      value="{{filterText}}" 
+      bindinput="onFilterInput" 
+    />
+  </div>
+</view>
+
+  <!-- 类型选择区域（可折叠） -->
   <view class="type-section">
-    <text class="section-label">Types:</text>
-    <view class="type-buttons">
+    <view class="type-header" bindtap="toggleTypes">
+      <text class="section-label">Types:</text>
+      <text class="toggle-icon">{{typesExpanded ? '▼' : '▶'}}</text>
+    </view>
+    <view wx:if="{{typesExpanded}}" class="type-buttons">
       <button
         wx:for="{{types}}"
         wx:key="name"
@@ -36,39 +53,37 @@
     <view class="list-header">
       <text class="list-title">
         {{selectedType ? 'Selected type: ' + selectedType : 'All Pokémon'}}
+        {{filterText ? ' (过滤: ' + filterText + ')' : ''}}
       </text>
       <text class="list-subtitle">Page {{page}} / {{totalPages}}</text>
     </view>
 
-    <!-- 加载动画：使用 SVG -->
     <view wx:if="{{loading}}" class="loading">
       <image src="/images/loading.svg" mode="aspectFit" style="width: 60rpx; height: 60rpx;" />
     </view>
 
     <view wx:else class="pokemon-grid">
       <view
-        wx:for="{{pokemonList}}"
+        wx:for="{{filteredList}}"
         wx:key="name"
         class="pokemon-card"
         data-name="{{item.name}}"
         bindtap="goToDetail"
       >
-        <!-- 从 URL 中提取 ID 构建官方图片地址 -->
-        
-        <!-- {{'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{item.url.split('/')[5]}}.png'}} -->
-
-        <image 
-  src="{{item.imageUrl}}" 
-  mode="aspectFit" 
-  class="pokemon-image"
-  binderror="onImageError"
-/>
+        <image
+          src="{{item.imageUrl}}"
+          mode="aspectFit"
+          class="pokemon-image"
+          binderror="onImageError"
+        />
         <text class="pokemon-name">#{{item.url.split('/')[6]}} {{item.name}}</text>
+      </view>
+      <view wx:if="{{filteredList.length === 0 && !loading}}" class="no-result">
+        没有匹配的宝可梦
       </view>
     </view>
 
-    <!-- 分页 -->
-    <view wx:if="{{!loading && totalPages > 0}}" class="pagination">
+    <view wx:if="{{!loading && totalPages > 0 && !filterText}}" class="pagination">
       <button
         size="mini"
         disabled="{{page <= 1}}"
