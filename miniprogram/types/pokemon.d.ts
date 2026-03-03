@@ -1,3 +1,4 @@
+// types/pokemon.d.ts
 export interface NamedAPIResource {
   name: string;
   url: string;
@@ -19,7 +20,6 @@ export interface PokemonTypeResponse {
 
 export interface PokemonSprites {
   front_default: string;
-  // 可根据需要添加其他
 }
 
 export interface PokemonAbility {
@@ -33,9 +33,4 @@ export interface Pokemon {
   name: string;
   sprites: PokemonSprites;
   abilities: PokemonAbility[];
-}
-
-export interface Type {
-  id: number;
-  name: string;
 }

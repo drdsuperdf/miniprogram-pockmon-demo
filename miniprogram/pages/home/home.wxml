@@ -6,7 +6,7 @@
     <text class="total">Total count: {{total}}</text>
   </view>
 
-  <!-- 名字过滤输入框（不换行，带loading） -->
+  <!-- 名字过滤输入框 -->
   <view class="filter-section">
     <div class="filter-row">
       <text>在此输入过滤👉</text>
@@ -67,6 +67,7 @@
       <view
         wx:for="{{filteredList}}"
         wx:key="name"
+        wx:for-index="index"
         class="pokemon-card"
         data-name="{{item.name}}"
         bindtap="goToDetail"
@@ -76,6 +77,8 @@
           mode="aspectFit"
           class="pokemon-image"
           binderror="onImageError"
+          data-default="{{CONFIG.DEFAULT_POKEMON_IMAGE}}"
+          data-index="{{index}}"
         />
         <text class="pokemon-name">#{{item.url.split('/')[6]}} {{item.name}}</text>
       </view>

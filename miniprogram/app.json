@@ -6,5 +6,6 @@
   "window": {
     "navigationBarTitleText": "宝可梦图鉴",
     "navigationBarBackgroundColor": "#ffffff"
-  }
+  },
+  "lazyCodeLoading": "requiredComponents"
 }
