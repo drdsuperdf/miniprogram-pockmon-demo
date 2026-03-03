@@ -6,19 +6,20 @@
     <text class="total">Total count: {{total}}</text>
   </view>
 
-  
-  <!-- 名字过滤输入框（placeholder 居中且变小） -->
+  <!-- 名字过滤输入框（不换行，带loading） -->
   <view class="filter-section">
-  <div class="filter-row">
-    <text>在此输入过滤👇</text>
-    <input 
-      type="text" 
-      placeholder="输入名字过滤" 
-      value="{{filterText}}" 
-      bindinput="onFilterInput" 
-    />
-  </div>
-</view>
+    <div class="filter-row">
+      <text>在此输入过滤👉</text>
+      <input 
+        type="text" 
+        placeholder="输入名字过滤" 
+        placeholder-class="placeholder-style"
+        value="{{filterText}}" 
+        bindinput="onFilterInput" 
+      />
+      <image wx:if="{{isFiltering}}" src="/images/loading.svg" mode="aspectFit" class="filter-loading" />
+    </div>
+  </view>
 
   <!-- 类型选择区域（可折叠） -->
   <view class="type-section">

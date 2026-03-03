@@ -20,27 +20,45 @@
   display: block;
 }
 
-/* 过滤输入框样式 */
+/* 过滤输入框区域 */
 .filter-section {
-  flex-wrap: wrap;
   margin-bottom: 20rpx;
 }
 
-.filter-input {
-  border: 1px solid #ccc;
-  border-radius: 8rpx;
-  padding: 20rpx;
-  font-size: 28rpx;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center; /* 内容居中 */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  white-space: nowrap;
 }
 
-/* placeholder 样式：字体变小且居中 */
+.filter-row input {
+  flex: 1;
+  min-width: 200rpx;
+  border: 1px solid #ccc;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+/* placeholder 样式 */
 .placeholder-style {
   font-size: 24rpx;
   text-align: center;
   color: #999;
+}
+
+/* 过滤 loading 图标 */
+.filter-loading {
+  width: 40rpx;
+  height: 40rpx;
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* 类型区域 */

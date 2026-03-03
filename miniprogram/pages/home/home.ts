@@ -31,7 +31,8 @@ Page({
     totalPages: 1,
     loading: false,
     filterDebounceTimer: null as number | null,
-    typesExpanded: true, // 新增：类型列表是否展开
+    typesExpanded: true,
+    isFiltering: false, // 是否正在过滤
   },
 
   onLoad() {
@@ -110,7 +111,7 @@ Page({
 
   onFilterInput(e: WechatMiniprogram.Input) {
     const text = e.detail.value;
-    this.setData({ filterText: text });
+    this.setData({ filterText: text, isFiltering: true });
 
     if (this.data.filterDebounceTimer) {
       clearTimeout(this.data.filterDebounceTimer);
@@ -126,17 +127,16 @@ Page({
   applyFilter() {
     const { pokemonList, filterText } = this.data;
     if (!filterText.trim()) {
-      this.setData({ filteredList: pokemonList });
+      this.setData({ filteredList: pokemonList, isFiltering: false });
       return;
     }
     const lowerText = filterText.toLowerCase();
     const filtered = pokemonList.filter(item =>
       item.name.toLowerCase().includes(lowerText)
     );
-    this.setData({ filteredList: filtered });
+    this.setData({ filteredList: filtered, isFiltering: false });
   },
 
-  // 切换类型列表折叠状态
   toggleTypes() {
     this.setData({ typesExpanded: !this.data.typesExpanded });
   },
